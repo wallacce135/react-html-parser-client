@@ -1,24 +1,34 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { BaseSyntheticEvent, useState } from 'react';
+import axios from 'axios';
+
 
 function App() {
+
+  const [linking, setLink] = useState<string>('')
+  const [isPressed, setIsPressed] = useState<boolean>(true);
+  const [data, setData] = useState<string>('');
+
+  const proccessData = () => {
+    axios.get('http://localhost:8080', {
+      headers:{
+        linking
+      }
+    }).then(data => {
+      // console.log(data);
+      setData(data.data.document)
+    })
+
+    setIsPressed(true)
+
+  }
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <input type="text" placeholder='link' onChange={(e: BaseSyntheticEvent) => setLink(e.target.value)} />
+      <button onClick={() => proccessData()}>Пропарсить</button>
+
+      {isPressed ? (<div dangerouslySetInnerHTML={{__html: data }}></div>) : (<div dangerouslySetInnerHTML={{__html: "<h1>Ничего нет</h1>" }}></div>) }
+
     </div>
   );
 }
